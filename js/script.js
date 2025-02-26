@@ -24,11 +24,13 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
     filteredData.forEach((entry) => {
       const tableRow = element.appendChild(
         createElement("tr", {
-          class: "shadow-lg table",
+          class: "border-b-2 border-gray-200 hover:bg-gray-100",
         })
       );
 
-      tableRow.appendChild(createElement("td", { class: "p-4" }, entry.id));
+      tableRow.appendChild(
+        createElement("td", { class: "p-4" }, entry.id)
+      );
       tableRow.appendChild(
         createElement("td", { class: "p-4" }, entry.description)
       );
@@ -36,22 +38,21 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
         createElement(
           "td",
           {
-            class: " p-4",
+            class: "p-4",
           },
           entry.type
         )
       );
 
       tableRow.appendChild(
-        createElement("td", { class: "p-4" }, `$${entry.amount}`)
+        createElement("td", { class: "p-4" }, `${entry.amount}`)
       );
       tableRow.className =
-        entry.type.toLowerCase() === "income"
-          ? "tableRow-color table-border-1  hover:cursor-pointer "
+        entry.type === "Income"
+          ? "tableRow-color table-border-1 hover:cursor-pointer"
           : entry.type === "expense"
           ? ""
           : "tableRow-1-color table-border-2 hover:cursor-pointer";
-
       const actionArea = tableRow.appendChild(
         createElement("td", {
           class: "",
@@ -79,8 +80,6 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
             body: JSON.stringify({
               ...entry,
               description: prompt("Enter new description"),
-              amount: parseFloat(prompt("Enter new amount")),
-              type: prompt("Enter new type (Income/Expense)"),
             }),
           });
           if (response.ok) {
@@ -172,8 +171,7 @@ window.onload = () => {
       "p",
       {
         id: "balance",
-        class:
-          "text-left font-bold text-4xl font-playfair tracking-wider text-blue-500",
+        class: "text-left font-bold text-4xl font-serif text-blue-500",
       },
       "$ 0.00"
     )
@@ -197,8 +195,7 @@ window.onload = () => {
       "p",
       {
         id: "income",
-        class:
-          "text-left font-bold text-4xl font-playfair tracking-wider text-green-500",
+        class: "text-left font-bold text-4xl font-serif text-green-500",
       },
       "$ 0.00"
     )
@@ -212,18 +209,17 @@ window.onload = () => {
     createElement(
       "h2",
       {
-        class: "text-left font-bold text-2xl font-serif ",
+        class: "text-left font-bold text-2xl font-serif",
       },
       "Expenses"
     )
   );
   card3.appendChild(
     createElement(
-      "span",
+      "p",
       {
         id: "expense",
-        class:
-          "text-left font-bold text-4xl text-red-500 tracking-wider font-playfair",
+        class: "text-left font-bold text-4xl font-serif text-red-500",
       },
       "$ 0.00"
     )
@@ -321,6 +317,7 @@ window.onload = () => {
   );
 
   buttonDiv.addEventListener("click", async function addEntry() {
+    // Select the table body first
     const tbody = document.querySelector("#tableData");
 
     if (
@@ -332,6 +329,7 @@ window.onload = () => {
       return;
     }
 
+    // Update card amounts
     if (incomeSelect.value === "Income") {
       card2.querySelector("p").textContent = `$${
         parseFloat(card2.querySelector("p").textContent.slice(1)) +
@@ -375,10 +373,12 @@ window.onload = () => {
     } catch (error) {
       console.warn(error);
     } finally {
+      // Reset form fields
       incomeSelect.selectedIndex = 0;
       descriptionSelect.value = "";
       amountSelect.value = "";
 
+      // Update the table with all entries
       if (tbody) fetchAndDisplay(tbody, ["all"]);
     }
   });
