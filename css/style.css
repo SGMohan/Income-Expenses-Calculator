@@ -3212,3 +3212,6 @@
   font-family: "Playfair Display", serif;
   
 }
+.edit-border{
+  border-bottom: 2px solid var(--color-green-500);
+}

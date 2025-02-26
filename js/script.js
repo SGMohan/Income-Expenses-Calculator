@@ -28,9 +28,7 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
         })
       );
 
-      tableRow.appendChild(
-        createElement("td", { class: "p-4" }, entry.id)
-      );
+      tableRow.appendChild(createElement("td", { class: "p-4" }, entry.id));
       tableRow.appendChild(
         createElement("td", { class: "p-4" }, entry.description)
       );
@@ -53,11 +51,7 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
           : entry.type === "expense"
           ? ""
           : "tableRow-1-color table-border-2 hover:cursor-pointer";
-      const actionArea = tableRow.appendChild(
-        createElement("td", {
-          class: "",
-        })
-      );
+      const actionArea = tableRow.appendChild(createElement("td"));
 
       const editButton = actionArea.appendChild(
         createElement(
@@ -71,25 +65,58 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
       );
 
       editButton.addEventListener("click", async () => {
-        try {
-          const response = await fetch(API_URL + "/" + entry.id, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ...entry,
-              description: prompt("Enter new description"),
-            }),
-          });
-          if (response.ok) {
-            fetchAndDisplay(element, filter);
-          } else {
-            alert("Error updating entry: " + (await response.text()));
+        const descriptionCell = tableRow.children[1];
+        const amountCell = tableRow.children[3];
+
+        const descriptionInput = createElement("input", {
+          type: "text",
+          value: entry.description,
+          class: "p-2 bg-white ",
+        });
+
+        const amountInput = createElement("input", {
+          type: "number",
+          value: entry.amount,
+        });
+
+        descriptionCell.innerHTML = "";
+        amountCell.innerHTML = "";
+        descriptionCell.appendChild(descriptionInput);
+        amountCell.appendChild(amountInput);
+
+        const saveChanges = async () => {
+          entry.description = descriptionInput.value;
+          entry.amount = parseFloat(amountInput.value) || 0;
+
+          try {
+            const response = await fetch(API_URL + "/" + entry.id, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(entry),
+            });
+            if (response.ok) {
+              fetchAndDisplay(element, filter);
+            } else {
+              alert("Error updating entry: " + (await response.text()));
+            }
+          } catch (error) {
+            alert("Error updating entry: " + error);
           }
-        } catch (error) {
-          alert("Error updating entry: " + error);
-        }
+        };
+
+        descriptionInput.addEventListener("blur", saveChanges);
+        descriptionInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") saveChanges();
+        });
+
+        amountInput.addEventListener("blur", saveChanges);
+        amountInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") saveChanges();
+        });
+
+        descriptionInput.focus();
       });
 
       const deleteButton = actionArea.appendChild(
