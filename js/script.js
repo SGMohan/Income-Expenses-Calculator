@@ -451,7 +451,7 @@ window.onload = () => {
 
   const thead = table.appendChild(
     createElement("thead", {
-      class: "bg-gray-200",
+      class: "bg-gray-200 font-playfair font-bold text-xl",
     })
   );
 
