@@ -71,7 +71,7 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
         const descriptionInput = createElement("input", {
           type: "text",
           value: entry.description,
-          class: "p-2 bg-white ",
+          class: "p-2 bg-white",
         });
 
         const amountInput = createElement("input", {
@@ -106,12 +106,12 @@ async function fetchAndDisplay(element, filter = ["all", "income", "expense"]) {
           }
         };
 
-        descriptionInput.addEventListener("blur", saveChanges);
+        
         descriptionInput.addEventListener("keypress", (e) => {
           if (e.key === "Enter") saveChanges();
         });
 
-        amountInput.addEventListener("blur", saveChanges);
+        
         amountInput.addEventListener("keypress", (e) => {
           if (e.key === "Enter") saveChanges();
         });
